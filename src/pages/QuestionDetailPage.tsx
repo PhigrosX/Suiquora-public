@@ -940,6 +940,10 @@ const QuestionDetailPage: React.FC = () => {
       ? question.bestAnswer.images.map(img => processImageUrl(img))
       : [];
 
+    // Check if the best answer has comments - adding null check for extraContent
+    const hasComments = question.bestAnswer?.extraContent && Array.isArray(question.bestAnswer.extraContent) && question.bestAnswer.extraContent.length > 0;
+    const isCommentsExpanded = expandedCommentAnswerId === question.bestAnswer.id;
+
     return (
       <Box sx={{ mb: 4 }}>
         <Typography variant="h6" sx={{
@@ -1000,6 +1004,116 @@ const QuestionDetailPage: React.FC = () => {
               </Box>
             )}
 
+            {/* Comments section for best answer */}
+            {hasComments && (
+              <Box mt={2}>
+                <Button
+                  size="small"
+                  startIcon={isCommentsExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                  onClick={() => toggleComments(question.bestAnswer!.id)}
+                  sx={{ mb: 1 }}
+                >
+                  {isCommentsExpanded ? "Hide" : "Show"} {question.bestAnswer!.extraContent!.length} {question.bestAnswer!.extraContent!.length === 1 ? "comment" : "comments"}
+                </Button>
+
+                <Collapse in={isCommentsExpanded}>
+                  <List sx={{
+                    bgcolor: isDarkMode ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.03)',
+                    borderRadius: 1,
+                    mt: 1,
+                    mb: 2
+                  }}>
+                    {question.bestAnswer!.extraContent!.map((comment, index) => {
+                      // Process valid comment images
+                      const validCommentImages = comment.images && Array.isArray(comment.images) && comment.images.length > 0
+                        ? comment.images.map(img => processImageUrl(img))
+                        : [];
+
+                      return (
+                        <ListItem
+                          key={index}
+                          alignItems="flex-start"
+                          sx={{ py: 1 }}
+                        >
+                          <ListItemAvatar sx={{ minWidth: 40 }}>
+                            <Avatar
+                              sx={{
+                                width: 28,
+                                height: 28,
+                                bgcolor: addressToColor(comment.answerer),
+                                fontSize: '0.8rem'
+                              }}
+                            >
+                              {comment.answerer.substring(0, 1).toUpperCase()}
+                            </Avatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={
+                              <Typography variant="body2" component="span" sx={{ fontWeight: 'medium' }}>
+                                {formatAddress(comment.answerer)}
+                              </Typography>
+                            }
+                            secondary={
+                              <Typography component="div" variant="body2">
+                                <Box sx={{ mt: 0.5 }}>
+                                  <MarkdownContent sx={{ fontSize: '0.9rem' }}>
+                                    <ReactMarkdown>
+                                      {comment.answerContent}
+                                    </ReactMarkdown>
+                                  </MarkdownContent>
+                                </Box>
+
+                                {/* Only show images if there are valid images */}
+                                {validCommentImages.length > 0 && (
+                                  <Box sx={{ mt: 1, mb: 1 }}>
+                                    <ImageList cols={Math.min(validCommentImages.length, 2)} gap={4} sx={{ maxHeight: 100 }}>
+                                      {validCommentImages.map((image, imgIndex) => (
+                                        <ImageListItem key={imgIndex} sx={{ position: 'relative' }}>
+                                          <img
+                                            src={image}
+                                            alt={`Comment Image ${imgIndex + 1}`}
+                                            loading="lazy"
+                                            style={{ borderRadius: '4px', objectFit: 'cover', height: '100%', cursor: 'zoom-in' }}
+                                            onClick={() => handleOpenImagePreview(image)}
+                                            onError={(e) => {
+                                              console.error("Comment image loading failed:", image);
+                                              (e.target as HTMLImageElement).src = 'https://via.placeholder.com/200x150?text=Image+Load+Error';
+                                            }}
+                                          />
+                                          <IconButton
+                                            size="small"
+                                            sx={{
+                                              position: 'absolute',
+                                              top: 5,
+                                              right: 5,
+                                              bgcolor: 'rgba(0,0,0,0.5)',
+                                              color: 'white',
+                                              '&:hover': { bgcolor: 'rgba(0,0,0,0.7)' }
+                                            }}
+                                            onClick={() => handleOpenImagePreview(image)}
+                                          >
+                                            <ZoomInIcon fontSize="small" />
+                                          </IconButton>
+                                        </ImageListItem>
+                                      ))}
+                                    </ImageList>
+                                  </Box>
+                                )}
+
+                                <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+                                  {formatRelativeTime(comment.createTime)}
+                                </Typography>
+                              </Typography>
+                            }
+                          />
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                </Collapse>
+              </Box>
+            )}
+
             <Box sx={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -1040,7 +1154,7 @@ const QuestionDetailPage: React.FC = () => {
         </Card>
       </Box>
     );
-  }, [question, isDarkMode, handleOpenImagePreview]);
+  }, [question, isDarkMode, handleOpenImagePreview, expandedCommentAnswerId, toggleComments]);
 
   // Answer list component with filtering logic
   const AnswersList = useMemo(() => {
