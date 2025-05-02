@@ -1,0 +1,243 @@
+/* 全局样式 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Base styles - Apply to both modes unless overridden */
+body {
+  position: relative;
+  overflow-x: hidden;
+  min-height: 100vh; /* Ensure minimum height */
+  margin: 0;
+}
+
+/* Glow dot styles */
+.glow-dot {
+  position: fixed;
+  border-radius: 50%;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(30px);
+}
+
+/* Dark mode specific styles */
+body[data-mui-color-scheme="dark"] {
+  background-color: #121225;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(156, 39, 176, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(3, 218, 198, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(84, 58, 183, 0.1) 0%, transparent 50%);
+  color: #e0e0e0; /* Lighter gray for better readability */
+}
+
+body[data-mui-color-scheme="dark"]::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at center, transparent 0%, #121225 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Light mode specific styles */
+body[data-mui-color-scheme="light"] {
+  background-color: #f8f9fa; /* Slightly off-white background */
+  color: #212529; /* Near-black text */
+}
+
+body[data-mui-color-scheme="light"]::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(224, 231, 255, 0.2) 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* --- Component Overrides for Light Mode --- */
+
+/* General Container/Surface Colors */
+body[data-mui-color-scheme="light"] .MuiPaper-root,
+body[data-mui-color-scheme="light"] .MuiCard-root,
+body[data-mui-color-scheme="light"] .MuiAppBar-root,
+body[data-mui-color-scheme="light"] .MuiDrawer-paper {
+  background-color: #ffffff !important; /* White surfaces */
+  color: #212529 !important; /* Dark text on surfaces */
+  border-color: #dee2e6 !important; /* Standard light border color */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important; /* Subtle shadow */
+}
+
+/* Specific Overrides for Key Areas */
+body[data-mui-color-scheme="light"] .MuiAppBar-root {
+  border-bottom: 1px solid #dee2e6 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+body[data-mui-color-scheme="light"] .MuiTabs-root {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #dee2e6 !important;
+}
+
+body[data-mui-color-scheme="light"] .MuiTabs-root + .MuiBox-root,
+body[data-mui-color-scheme="light"] div[role="tabpanel"] > .MuiBox-root,
+body[data-mui-color-scheme="light"] div[role="tabpanel"] > .MuiPaper-root {
+  background-color: #ffffff !important; /* Ensure tab content area is white */
+  color: #212529 !important;
+  border: none !important; /* Remove extra borders */
+  box-shadow: none !important;
+}
+
+/* Hero/Intro Section */
+body[data-mui-color-scheme="light"] .hero-section,
+body[data-mui-color-scheme="light"] .intro-section {
+  background: #e7f5ff !important; /* Very light blue */
+  color: #1864ab !important; /* Darker blue text */
+  border: 1px solid #c5dff8 !important; /* Light blue border */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Text and Links */
+body[data-mui-color-scheme="light"] .MuiTypography-root {
+  color: #212529 !important; /* Default dark text */
+}
+
+body[data-mui-color-scheme="light"] h1, body[data-mui-color-scheme="light"] h2, body[data-mui-color-scheme="light"] h3, body[data-mui-color-scheme="light"] h4, body[data-mui-color-scheme="light"] h5, body[data-mui-color-scheme="light"] h6 {
+  color: #000000 !important; /* Black headings */
+}
+
+body[data-mui-color-scheme="light"] a,
+body[data-mui-color-scheme="light"] .MuiLink-root {
+  color: #0d6efd !important; /* Standard Bootstrap blue for links */
+  font-weight: 500;
+}
+body[data-mui-color-scheme="light"] a:hover,
+body[data-mui-color-scheme="light"] .MuiLink-root:hover {
+  color: #0a58ca !important; /* Darker blue on hover */
+}
+
+/* Buttons */
+body[data-mui-color-scheme="light"] .MuiButton-containedPrimary {
+  background-color: #0d6efd !important; /* Bootstrap blue */
+  color: #ffffff !important;
+  box-shadow: 0 2px 0 rgba(13, 110, 253, 0.3) !important;
+  border: none !important;
+}
+
+body[data-mui-color-scheme="light"] .MuiButton-containedSecondary {
+  background-color: #6c757d !important; /* Bootstrap secondary gray */
+  color: #ffffff !important;
+  box-shadow: 0 2px 0 rgba(108, 117, 125, 0.3) !important;
+  border: none !important;
+}
+
+body[data-mui-color-scheme="light"] .MuiButton-containedWarning {
+  background-color: #ffc107 !important; /* Bootstrap warning yellow */
+  color: #000000 !important; /* Black text on yellow */
+  box-shadow: 0 2px 0 rgba(255, 193, 7, 0.3) !important;
+  border: none !important;
+}
+
+/* Ensure text on specific contained buttons is white/black as appropriate */
+body[data-mui-color-scheme="light"] .MuiButton-containedPrimary *,
+body[data-mui-color-scheme="light"] .MuiButton-containedSecondary * {
+  color: #ffffff !important;
+}
+body[data-mui-color-scheme="light"] .MuiButton-containedWarning * {
+  color: #000000 !important;
+}
+
+/* Tabs */
+body[data-mui-color-scheme="light"] .MuiTabs-indicator {
+  background-color: #0d6efd !important; /* Bootstrap blue indicator */
+}
+
+body[data-mui-color-scheme="light"] .MuiTab-root {
+  color: #6c757d !important; /* Gray text */
+}
+
+body[data-mui-color-scheme="light"] .MuiTab-root.Mui-selected {
+  color: #0d6efd !important; /* Blue for selected tab */
+  font-weight: 600;
+}
+
+/* Icons */
+body[data-mui-color-scheme="light"] .MuiSvgIcon-root,
+body[data-mui-color-scheme="light"] .MuiIconButton-root {
+  color: #495057 !important; /* Dark gray icons */
+}
+
+/* Specific icon button colors in AppBar */
+body[data-mui-color-scheme="light"] .MuiAppBar-root .MuiIconButton-root {
+   color: #495057 !important;
+}
+
+/* Tooltips */
+body[data-mui-color-scheme="light"] .MuiTooltip-tooltip {
+  background-color: #212529 !important; /* Dark background */
+  color: #f8f9fa !important; /* Light text */
+}
+
+/* Scrollbar */
+body[data-mui-color-scheme="light"] ::-webkit-scrollbar {
+  width: 8px;
+}
+body[data-mui-color-scheme="light"] ::-webkit-scrollbar-track {
+  background: #e9ecef; /* Lighter gray track */
+}
+body[data-mui-color-scheme="light"] ::-webkit-scrollbar-thumb {
+  background: #adb5bd; /* Medium gray thumb */
+  border-radius: 4px;
+}
+body[data-mui-color-scheme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: #6c757d; /* Darker gray thumb on hover */
+}
+
+/* Remove Glass effect overrides for light mode if they cause issues */
+/* Let the default Paper/Card styles handle backgrounds */
+body[data-mui-color-scheme="light"] .glass,
+body[data-mui-color-scheme="light"] .glass-card {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  border: 1px solid #dee2e6 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Remove colored border/background utility classes for simplicity */
+body[data-mui-color-scheme="light"] .primary-border,
+body[data-mui-color-scheme="light"] .secondary-border,
+body[data-mui-color-scheme="light"] .primary-bg,
+body[data-mui-color-scheme="light"] .secondary-bg {
+  border: none !important;
+  background-color: inherit !important;
+  color: inherit !important;
+}
+
+/* Remove colored button utility classes if not essential */
+body[data-mui-color-scheme="light"] .primary-btn,
+body[data-mui-color-scheme="light"] .secondary-btn,
+body[data-mui-color-scheme="light"] .error-btn {
+   /* Remove these styles or redefine with light palette */
+}
+
+/* Final check: Ensure no inline styles or highly specific selectors are overriding these */
+/* Inspect elements in the browser dev tools if purple persists */
+
+/* Dark mode specific styles - default */
+body[data-mui-color-scheme="dark"] {
+  /* ... existing dark mode styles ... */
+}
+
+/* ... existing dark mode component overrides ... */
+
+/* ... existing keyframes ... */
