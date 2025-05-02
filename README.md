@@ -2,6 +2,8 @@
 
 **SuiQuora** is a decentralized Q&A platform built on the **Sui blockchain**, where users are incentivized to share knowledge and provide high-quality answers through token rewards.
 
+🌐 **Live Demo**: [https://sui-quora.vercel.app/](https://sui-quora.vercel.app/)
+
 ---
 
 ## 🚀 Core Features
