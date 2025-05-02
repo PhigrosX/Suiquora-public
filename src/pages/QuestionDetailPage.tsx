@@ -1065,7 +1065,7 @@ const QuestionDetailPage: React.FC = () => {
 
                                 {/* Only show images if there are valid images */}
                                 {validCommentImages.length > 0 && (
-                                  <Box sx={{ mt: 1, mb: 1 }}>
+                                  <Box sx={{ mt: 1, mb: 1, mr: 5 }}> {/* 添加右边距，为编辑按钮留出空间 */}
                                     <ImageList cols={Math.min(validCommentImages.length, 2)} gap={4} sx={{ maxHeight: 100 }}>
                                       {validCommentImages.map((image, imgIndex) => (
                                         <ImageListItem key={imgIndex} sx={{ position: 'relative' }}>
@@ -1248,7 +1248,30 @@ const QuestionDetailPage: React.FC = () => {
               </Box>
             )}
 
-            <CardContent sx={{ p: 3 }}>
+            <CardContent sx={{ p: 3, position: 'relative' }}>
+              {/* 编辑按钮移至右上角且避开所有其他元素 */}
+              {currentAccount && answer.answerer === currentAccount.address && isActive && (
+                <IconButton
+                  size="small"
+                  color="primary"
+                  onClick={() => handleOpenEditDialog(answer)}
+                  sx={{
+                    position: 'absolute',
+                    top: isUserAnswer ? 22 : 20,  // 垂直向下移动更多
+                    right: 60,                    // 从右侧移开更多距离
+                    bgcolor: isDarkMode ? 'rgba(103, 58, 183, 0.1)' : 'rgba(103, 58, 183, 0.05)',
+                    '&:hover': {
+                      bgcolor: isDarkMode ? 'rgba(103, 58, 183, 0.2)' : 'rgba(103, 58, 183, 0.1)',
+                    },
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+                    zIndex: 5                     // 确保按钮始终在顶层
+                  }}
+                  aria-label="Edit answer"
+                >
+                  <EditIcon fontSize="small" />
+                </IconButton>
+              )}
+
               {/* Answer content */}
               <MarkdownContent>
                 <ReactMarkdown>
@@ -1301,45 +1324,6 @@ const QuestionDetailPage: React.FC = () => {
                 </Box>
               )}
 
-              {/* 添加操作按钮区域 */}
-              <Box sx={{
-                display: 'flex',
-                mt: 2,
-                pt: 2,
-                borderTop: isDarkMode ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)'
-              }}>
-                {/* 添加评论按钮 */}
-                {renderCommentButton(answer)}
-
-                {/* 编辑答案按钮 - 只对当前用户的答案显示 */}
-                {currentAccount && answer.answerer === currentAccount.address && isActive && (
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    color="primary"
-                    startIcon={<EditIcon />}
-                    onClick={() => handleOpenEditDialog(answer)}
-                    sx={{ mr: 1 }}
-                  >
-                    Edit
-                  </Button>
-                )}
-
-                {/* 选择最佳答案按钮 - 只对问题提问者显示 */}
-                {currentAccount && question && question.asker === currentAccount.address && isActive && (
-                  <Button
-                    size="small"
-                    variant="contained"
-                    color="success"
-                    onClick={() => handleSelectBestAnswer(answer.answerer)}
-                    disabled={isChoosingBest}
-                    sx={{ mr: 1 }}
-                  >
-                    {isChoosingBest ? <CircularProgress size={24} /> : 'Choose as Best'}
-                  </Button>
-                )}
-              </Box>
-
               {/* Comments section */}
               {hasComments && (
                 <Box mt={2}>
@@ -1375,10 +1359,9 @@ const QuestionDetailPage: React.FC = () => {
                               comment.answerer === currentAccount.address &&
                               isActive &&
                               question && !question.answered && (
-                                <Button
+                                <IconButton
                                   size="small"
                                   color="info"
-                                  startIcon={<EditIcon fontSize="small" />}
                                   onClick={() => {
                                     setCommentContent(comment.answerContent);
                                     setCommentAnswererId(answer.answerer);
@@ -1388,18 +1371,19 @@ const QuestionDetailPage: React.FC = () => {
                                     setIsEditingCommentMode(true);
                                   }}
                                   sx={{
-                                    minWidth: 'auto',
-                                    px: 1,
-                                    fontSize: '0.75rem',
-                                    mt: -0.5,
                                     position: 'absolute',
                                     top: 8,
                                     right: 8,
-                                    zIndex: 2
+                                    bgcolor: isDarkMode ? 'rgba(33, 150, 243, 0.1)' : 'rgba(33, 150, 243, 0.05)',
+                                    '&:hover': {
+                                      bgcolor: isDarkMode ? 'rgba(33, 150, 243, 0.2)' : 'rgba(33, 150, 243, 0.1)',
+                                    },
+                                    width: 28,
+                                    height: 28
                                   }}
                                 >
-                                  Edit
-                                </Button>
+                                  <EditIcon fontSize="small" />
+                                </IconButton>
                               )
                             }
                           >
@@ -1489,7 +1473,59 @@ const QuestionDetailPage: React.FC = () => {
                 </Box>
               )}
 
-              {/* 其余代码保持不变 */}
+              {/* 添加操作按钮区域 */}
+              <Box sx={{
+                display: 'flex',
+                mt: 2,
+                pt: 2,
+                borderTop: isDarkMode ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)'
+              }}>
+                {/* 添加评论按钮 */}
+                {renderCommentButton(answer)}
+
+                {/* 选择最佳答案按钮 - 只对问题提问者显示 */}
+                {currentAccount && question && question.asker === currentAccount.address && isActive && (
+                  <Button
+                    size="small"
+                    variant="contained"
+                    color="success"
+                    onClick={() => handleSelectBestAnswer(answer.answerer)}
+                    disabled={isChoosingBest}
+                    sx={{ mr: 1 }}
+                  >
+                    {isChoosingBest ? <CircularProgress size={24} /> : 'Choose as Best'}
+                  </Button>
+                )}
+              </Box>
+
+              {/* Answer author information - moved directly below the buttons with reduced margin */}
+              <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                mt: 1, // 减小顶部边距
+                pt: 1, // 减小顶部内边距
+                borderTop: 'none' // 移除顶部边框
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Avatar sx={{
+                    width: 28,
+                    height: 28,
+                    bgcolor: addressToColor(answer.answerer),
+                    mr: 1
+                  }}>
+                    {answer.answerer.substring(0, 1).toUpperCase()}
+                  </Avatar>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary">
+                      Answered by {formatAddress(answer.answerer)}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {formatRelativeTime(answer.createTime)}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
             </CardContent>
           </Card>
         );
