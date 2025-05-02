@@ -67,12 +67,6 @@ pnpm install
 pnpm run dev
 ```
 
-### 4. Build for production
-
-```bash
-pnpm run build
-```
-
 ## 🔗 Smart Contract Modules
 
 Contracts deployed on Sui Testnet include:
